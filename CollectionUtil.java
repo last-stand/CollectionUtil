@@ -19,4 +19,12 @@ public class CollectionUtil{
 		}
 		return result;
 	}
+
+	public static<E,K> K reduce(List<E> dataList, ListReducer<E,K> lreducer, K initial){
+		K previous = initial;
+		for(int i=0; i<dataList.size(); i++){
+			previous = lreducer.reduceFunc(previous,dataList.get(i),i,dataList);
+		}
+		return previous;
+	};
 }

@@ -10,6 +10,10 @@ interface ListFilter<E>{
     boolean filterFunc(E element, int index, List<E> dataList);
 }
 
+interface ListReducer<E,K>{
+    K reduceFunc(K previous, E current, int index, List<E> dataList);
+}
+
 class IntMapper implements ListMapper<Integer,Integer> {
     public Integer mapper(Integer element, int index, List<Integer> dataList){
         return element*element*element;
@@ -37,6 +41,18 @@ class IntFilter implements ListFilter<Integer> {
 class StringFilter implements ListFilter<String> {
     public boolean filterFunc(String element, int index, List<String> dataList){
         return element.length() > 4;
+    }
+}
+
+class IntReducer implements ListReducer<Integer,Integer> {
+    public Integer reduceFunc(Integer previous, Integer current,int index, List<Integer> dataList){
+        return previous + current;
+    }
+}
+
+class MaxStrLenReducer implements ListReducer<String,Integer> {
+    public Integer reduceFunc(Integer previous, String current,int index, List<String> dataList){
+        return previous > current.length() ? previous : current.length();
     }
 }
 
@@ -112,7 +128,7 @@ public class CollectionUtilTest {
         assertEquals(expected.get(1),result.get(1));
     }
 
-     @Test
+    @Test
     public void filter_returns_list_of_string_whose_length_greater_than_4_from_given_String_LIST(){
         ListFilter<String> lfilter = new StringFilter();
         List<String> str = new ArrayList<String>();
@@ -127,5 +143,31 @@ public class CollectionUtilTest {
         List<String> result = CollectionUtil.<String>filter(str,lfilter);
         assertEquals(expected.get(0),result.get(0));
         assertEquals(expected.get(1),result.get(1));
+    }
+
+    @Test
+    public void reduce_returns_sum_of_all_elements_of_given_INTEGER_LIST(){
+        ListReducer<Integer,Integer> lreducer = new IntReducer();
+        List<Integer> numbers = new ArrayList<Integer>();
+        numbers.add(1);
+        numbers.add(2);
+        numbers.add(3);
+        numbers.add(4);
+
+        int result = CollectionUtil.<Integer,Integer>reduce(numbers,lreducer,10);
+        assertEquals(20,result);
+    }
+
+    @Test
+    public void reduce_returns_longest_string_from_the_given_String_LIST(){
+        ListReducer<String,Integer> lreducer = new MaxStrLenReducer();
+        List<String> str = new ArrayList<String>();
+        str.add("Twinkle");
+        str.add("Jack");
+        str.add("Jill");
+        str.add("Bakari");
+
+        int result = CollectionUtil.<String,Integer>reduce(str,lreducer,"jai".length());
+        assertEquals(7,result);
     }
 }
