@@ -3,3 +3,4 @@ CollectionUtilTest.class
 IntMapper.class
 ListMapper.class
 StringMapper.class
+StrLenMapper.class
